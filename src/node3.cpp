@@ -1,9 +1,9 @@
 #include <cv_bridge/cv_bridge.h>
-#include <image_transport/image_transport.h>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <image_transport/image_transport.h>  //for publishing and subscribing to the images in ROS
+#include <opencv2/highgui/highgui.hpp>        //for OpenCV's GUI modules
+#include <opencv2/imgproc/imgproc.hpp>        // for OpenCV's image processing modules
 #include <ros/ros.h>
-#include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/image_encodings.h>  // includes the ROS image message type
 #include <string>
 
 static const std::string OPENCV_WINDOW = "Image window";
@@ -17,7 +17,7 @@ class ImageConverter {
   public:
     ImageConverter()
         : it_(nh_) {
-        // Subscribe to input video feed and publish output video feed
+        // Now Subscribing to the input video feed and publishing the output video feed
         image_sub_ = it_.subscribe("/iris/camera_red_iris/image_raw", 1, &ImageConverter::imageCb, this);
         image_pub_ = it_.advertise("/image_converter/output_video", 1);
 
@@ -25,21 +25,25 @@ class ImageConverter {
     }
 
     ~ImageConverter() {
-        cv::destroyWindow(OPENCV_WINDOW);
+        cv::destroyWindow(OPENCV_WINDOW);  // destructor(destroys the display window on shutdown)
     }
 
     void imageCb(const sensor_msgs::ImageConstPtr& msg) {
         cv_bridge::CvImagePtr cv_ptr;
         try {
             cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+            // sensor_msgs::image_encodings::BGR8 is simply a constant for bgr8.
+            // OpenCV expects color images to use BGR channel order
         } catch (cv_bridge::Exception& e) {
             ROS_ERROR("cv_bridge exception: %s", e.what());
             return;
         }
-
-        // Draw an example circle on the video stream
-        // if (cv_ptr->image.rows > 60 && cv_ptr->image.cols > 60)
-        // cv::circle(cv_ptr->image, cv::Point(50, 50), 10, CV_RGB(255,0,0));
+        /*
+            try statement allows to define a block of code to be tested for errors while it is being executed.
+            catch statement allows to define a block of code to be executed if an error occurs in the try block.
+            Here we are using try and catch just to catch some conversion errors because those functions don't
+            check for the validity of our data.
+        */
 
         std::string gray_image = "/home/piyush/images/Gray_Image";
         static int count = 0;
