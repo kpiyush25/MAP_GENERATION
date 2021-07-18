@@ -10,7 +10,7 @@ using namespace cv;
 
 Stitcher::Mode mode = Stitcher::SCANS;
 
-vector<Mat> imgs;  // Vector for storing the pictures
+vector<Mat> images;  // Vector for storing the pictures
 int main(int argc, char* argv[]) {
     int i;
     // Now storing all the images taken by the drone into a vector in order to use the required OpenCV functions
@@ -21,12 +21,11 @@ int main(int argc, char* argv[]) {
         gray_image.append(".jpg");
         Mat img = imread(gray_image);
         if (img.empty()) {
-            cout << "Can't read image "
-                 << "\n";
+            cout << "Not able to read images anymore :(\n";
             break;
         }
-        imgs.push_back(img);
-        cout << imgs.size() << "\n";
+        images.push_back(img);
+        cout << images.size() << "\n";
     }
     cout << i << endl;
     Mat stitched_img;  // this object will store the stitched image
@@ -34,7 +33,7 @@ int main(int argc, char* argv[]) {
     Ptr<Stitcher> stitcher = Stitcher::create(mode, false);  // Creating a Stitcher class object with mode scans.
 
     // this will stitch all the images present in the image array
-    Stitcher::Status status = stitcher->stitch(imgs, stitched_img);
+    Stitcher::Status status = stitcher->stitch(images, stitched_img);
 
     if (status != Stitcher::OK) {
         // if the images are not stitched successfully then the status will not be OK
